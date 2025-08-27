@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+  schedule:
+    # 每天早上0点构建
+    - cron: "0 0 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 配置Golang环境
+      - name: Set up golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: "^1.16.5"
+      - run: go env -w GO111MODULE=on
+
+      # 检出代码
+      - name: Checkout Trigger Branch
+        uses: actions/checkout@v2
+
+      # 开始构建
+      - name: Excute Build Script
+        run: go run ./export_db/convert.go
+
+      # 列出产物
+      - name: List output
+        run: du -ah ./output/** | grep poems
+
+      # 上传构建产物
+      - uses: actions/upload-artifact@v2
+        with:
+          name: poems
+          path: ./output/**/*
+          retention-days: 7
