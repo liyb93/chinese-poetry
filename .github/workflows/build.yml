@@ -1,0 +1,38 @@
+name: Build Sqlite from chinese-poetry (Python)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"  # 每天 00:00 UTC 自动构建
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -V
+          pip install -r export_db/requirements.txt || true
+
+      - name: Convert to sqlite
+        run: |
+          python export_db/convert.py \
+            --source . \
+            --db poems.sqlite3 \
+            --schema export_db/schema.sql
+
+      - name: Upload artifact (v4)
+        uses: actions/upload-artifact@v4
+        with:
+          name: chinese-poetry-sqlite
+          path: poems.sqlite3
+          if-no-files-found: error
