@@ -1,4 +1,4 @@
-name: Build Sqlite from chinese-poetry (Python)
+name: Build DB
 
 on:
   workflow_dispatch:
