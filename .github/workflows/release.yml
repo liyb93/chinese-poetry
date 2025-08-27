@@ -33,7 +33,7 @@ jobs:
         run: du -ah ./output/** | grep poems
 
       # 上传构建产物
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: poems
           path: ./output/**/*
